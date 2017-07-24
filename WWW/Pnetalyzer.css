@@ -1,0 +1,211 @@
+/* Tooltip container */
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+    opacity: inherit !important;
+    font-size: inherit !important;
+    z-index: inherit !important;
+}
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 200px;
+    background-color: #189617;
+    color: #fff;
+    text-align: center;
+    padding: 5px 10px;
+    border-radius: 6px;
+    opacity:0.9 !important;
+
+    /* Position the tooltip text */
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 0;
+    margin-left: 0;
+
+    /* Fade in tooltip */
+    opacity: 0;
+    transition: opacity 1s;
+}
+
+/* Tooltip arrow */
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 5%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #189617 transparent transparent transparent;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}				
+			
+						
+
+
+/*th.sorting_disabled {
+    
+			transform: rotate(-90deg);
+
+			border: 0px !important;
+    
+    
+			height: 80px;
+
+			word-spacing: 9999999px;    
+			transform-origin: 30% 55% 0;
+    
+			text-align: left;
+    
+			padding: 10px !important;
+    
+			font-size: smaller;
+    
+
+			}*/
+
+.shiny-plot-output{
+	height: 100vh !important;
+	width: 100vmin !important;
+		}
+.warning {
+	border-top: 2px solid orange !important;
+	border-right: 2px solid orange !important;
+	border-left: 2px solid orange !important;
+          }
+#prevnext{display:inline-block !important;/* position: fixed; *//* top: 0; *//* left: 5px; *//* right: 5px !important; */width: 100% !important;
+/*bottom-padding:160px !important;*/background-color: #fbb741;margin-right: 5px !important;margin-left: 0px !important;padding: 0px !important;}
+/*#phqscores {
+margin-top:50px;
+}*/
+#prevBtn{
+	float:left;
+	display:table-cell;
+	width:15%;
+	background-color: #feff00;
+	/* height: 100% !important; */
+	margin-left: 0px !important;
+	}
+.page{
+
+text-align:center;
+
+vertical-align:middle;
+
+/* width: 75% !important; */
+
+padding-top:8px !important;
+
+/*display:table-cell;position:relative;
+padding-right:35%;
+padding-left:35%;
+border:1px;
+:0 right-floated-width 0 left-floated-width;*/
+
+/* margin-right: 10% !important; */
+
+/* margin-left: 10% !important; */
+
+/* display: inline-table !important; */
+
+font-weight: bolder;
+}
+
+div#step1 {}
+
+#nextBtn
+	{
+	float:right;
+	display:table-cell;
+	width:15%;
+	background-color: #feff00;
+	}
+#phqscores{overflow-x: auto !important;overflow-y: auto !important;margin-top: 5px !important;padding-top: 0px !important;}
+#phqcausal{
+overflow-x:scroll !important;
+overflow-y:scroll !important;	
+}
+table{/* width:100vmin; *//* height:90vh; */}
+tr{
+border-collapse:collapse !important;
+}
+table{
+border-collapse:collapse !important;
+}
+
+th.sorting_disabled {
+    padding-right: 4px !important;
+    padding-left: 4px !important;
+    font-size: smaller;
+    line-height: 1;
+    background-color: #f6fcc1;
+    border-left: 1px brown solid;
+}
+
+/*div {
+    width: 100% !important;
+    padding-right: 2px !important;
+    padding-left:2px !important;
+     margin-right: 2px; 
+}*/
+
+table#DataTables_Table_0 {}
+
+body {
+    /* color: #c43406; */
+}
+
+td {
+    border-left: 1px brown solid;
+}
+
+tr.odd {
+    background-color: rgb(242, 216, 216) !important;
+}
+
+div#markdown {
+    height: 90vh !important;
+    overflow-y: scroll !important;
+}
+
+#markdown table thead th {
+    font-size: xx-small !important;
+    border: 1px brown solid !important;
+    line-height: 1 !important;
+}
+
+#markdown table tbody td {
+    border: 1px brown solid !important;
+}
+
+.modal-dialog {
+    width: 70% !important;
+    /* z-index: 2000 !important; */
+    /* opacity: 1 !important; */
+}
+
+.container-fluid {
+    padding-right: 5px !important;
+    padding-left: 5px !important;
+}
+
+input[type="radio"] {
+    width: 1.5em;
+    height: 1.5em;
+    position: relative;
+    text-align: center !important;
+    left: 5%;
+}
+
+#phqscores td {
+    padding: 0 !important;
+}

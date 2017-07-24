@@ -1,0 +1,6 @@
+Score, severity,Comments
+c(0:4),Minimal or none,Monitor; may not require treatment
+c(5:9),Mild,"Use clinical judgment (symptom duration, functional impairment) to determine necessity of treatment"
+c(10:14),Moderate,"Use clinical judgment (symptom duration, functional impairment) to determine necessity of treatment"
+c(15:19),Moderately severe,"Warrants active treatment with psychotherapy, medications, or combination"
+c(20:27),Severe,"Warrants active treatment with psychotherapy, medications, or combination"

@@ -1,0 +1,64 @@
+---
+title: "My Depression Report"
+author: "My Depression Application"
+date: 7/6/2017
+
+output: html_document
+---
+<style> body{ font-family: 'Oxygen', sans-serif; font-size: 16px; line-height: 24px; } h1,h2,h3,h4 { font-family: 'Raleway', sans-serif; } .container { width: 1000px; } h3 { background-color: #D4DAEC; text-indent: 100px; } h4 { text-indent: 100px; } g-table-intro h4 { text-indent: 0px; } </style>
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r echo=FALSE, results='asis'}
+cat("Date: ",format(Sys.time(), "%a %b %d %X %Y"))
+```
+### STEP1: Depression scores
+
+Here is how you assessed  severity of each symptom in the first questionnaire: 
+```{r echo=FALSE, results='asis'}
+
+mscores=as.matrix(scores)
+colnames(mscores)=c("Score")
+kable(mscores,caption="PHQ-9 Scores")
+#dbphq<- read.csv("PHQ.csv",header=T)
+totalscore<-sum(as.numeric(scores))
+rownumber=which(apply(dbphq,1,function(x){totalscore %in% eval(parse(text=x[[1]]))})==TRUE)
+cat(paste0("Based on the abobe-mentioned scores your total score is ",totalscore," ,which translates to a severity of ",dbphq[rownumber,2],".This questionnaire suggests the following course of action for this degree of severity to the care provider: ",dbphq[rownumber,3] ))
+```
+### STEP2: Causality Matrix
+In the second step, you supplied the following causality matrix:
+
+```{r echo=FALSE, results='asis'}
+
+#mscores=as.matrix(scores)
+#colnames(mscores)=c("Score")
+kable(m2numeric,caption="Causality Matrix",align=c("c"))
+```
+
+### Step3: Your Depression Network Graph
+
+Based on this causality matrix the following graph was built to visually present interplay of your symptoms of depression.
+
+```{r  echo=FALSE}
+library(qgraph)
+qgraph(qgresult)
+```
+
+## Explanation About the Graph
+
+In this graph symptoms are represented by circles which are also called "nodes". The 
+relationship between them are represented by arrows. So for example a->b means symptom a
+contributes to worsening of symptom b. 
+
+The score of each symptom is represented by the shade of its color so for example if you scored a symptom as happening "Nearly every day" in stage 1, its color is deep red and if a symptom is scored as "Not at all", it has no color and only shows the color of the background which is green. The size of a node reflects its "Centricity" in the graph. The software assigns a more central position to symptoms that are more prominent in terms of relations to other symptoms in the graph. In other terms symptoms that are bigger in size play a  more central role in your depression, hence, if targeted by treatment(either medication or psychotherapy) have a deeper impact in reducing the overall severity of the depression. 
+
+In network analysis which is the statistical method used in computing this graph, multiple measures of centricity are calculated for each symptom. One of them is Outdegree, which is the number of arrows which originate from a node. If a symptom that contribute to worsening of many other symptoms in the graph is targeted and gets improved, the overall improvement in severity of depression would be more prominant. Here is a table ordered by the outdegree of each symptom of your depression.
+```{r echo=FALSE, results='asis'}
+
+
+kable(oddf,caption="Centrality",align=c("c"))
+```
+
+Different medications and psychotherapy techniques usually target multiple symptoms but each treatment modality is more effective against one or a few symptoms. Using the data above you can discuss with your provider to start new medications, change the dose of current medication used against the symptom or add medications or therapies which are more effective against the more central symptoms.
+
+We suggest repeating the analysis periodically to monitor the effecacy of treatment in lowering the score of more central symptoms, their centricity and the total score and severity of the depression.
