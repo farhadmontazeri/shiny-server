@@ -30,9 +30,23 @@ window.removeduplicates = function () {
 	 var sechalf = tdcol1txt.slice(halflen, txtlen);
 	 //console.log(firsthalf);
 	 //console.log(sechalf);
-	 if(firsthalf==sechalf){tdcol1.replaceWith(firsthalf);}
+	 if(firsthalf===sechalf){tdcol1.replaceWith(firsthalf);}
+	 }
+        
+	for (var i2 = 1; i2 < 10; i2++) {
+         //console.log(i);
+	var tdcol2 = $('#phqcausal tbody tr:nth-child('+i2+') td:nth-child(1) ').contents()[0];
+     var tdcol2txt=tdcol2.innerText;
+	 var txtlen2=tdcol2txt.length;
+	 var halflen2=txtlen2/2; 
+	 var firsthalf2 = tdcol2txt.slice(0, halflen2);
+	 
+	 var sechalf2 = tdcol2txt.slice(halflen2, txtlen2);
+	 //console.log(firsthalf);
+	 //console.log(sechalf);
+	 if(firsthalf2===sechalf2){tdcol2.replaceWith(firsthalf2);}
 	        
-        }
+        }	
     };
      window.markr2bdel = function () {
        

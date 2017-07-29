@@ -12,7 +12,7 @@
 .tooltip .tooltiptext {
     visibility: hidden;
     width: 200px;
-    background-color: #189617;
+    background-color: #172c96;
     color: #fff;
     text-align: center;
     padding: 5px 10px;
@@ -29,6 +29,8 @@
     /* Fade in tooltip */
     opacity: 0;
     transition: opacity 1s;
+    width: inherit;
+    color: white;
 }
 
 /* Tooltip arrow */
@@ -40,7 +42,7 @@
     margin-left: -5px;
     border-width: 5px;
     border-style: solid;
-    border-color: #189617 transparent transparent transparent;
+    border-color: #172c96 transparent transparent transparent;
 }
 
 /* Show the tooltip text when you mouse over the tooltip container */
@@ -208,4 +210,20 @@ input[type="radio"] {
 
 #phqscores td {
     padding: 0 !important;
+}
+
+table.display.dataTable.no-footer.DTFC_Cloned {
+    width: initial !important;
+}
+
+.DTFC_LeftBodyLiner {
+    /* width: 50%!important; */
+}
+
+.DTFC_LeftBodyLiner {
+    height: 100% !important;
+}
+
+.DTFC_LeftBodyWrapper {
+    height: initial !important;
 }
