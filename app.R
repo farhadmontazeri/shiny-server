@@ -164,8 +164,24 @@ lapply(seq(NUM_PAGES), function(i) {
 $('#phqcausal tbody').on( 'click', 'td', function (e) 
         {//window.el=table.cell(this);
                     
-                   c=$(table.cell(this).node());
-                    if(c.hasClass('selected')){c.children()[0].checked=false}else{c.children()[0].checked=true}
+                   var c=$(table.cell(this).node());
+                    window.c2=c;
+                    var viscol = table.cell( this ).index().columnVisible;
+                    var r = table.cell( this ).index().row;
+                    var c2 = table.cell( this ).index().column;
+                    //console.log('viscol is'+'viscol'+' r is '+'r'+ 'c is '+'c'+' );
+                    console.log(r);
+                    console.log(c2);
+                    console.log(viscol);
+                    if (r+1==c2){
+                        e.stopPropagation();
+                      } else if (c.hasClass('selected')){
+                      c.children()[0].checked=false;
+                      } else {
+                      //c.addClass('selected');
+                      c.children()[0].checked=true;
+                      }
+
   });
       $('#phqcausal tbody').on( 'dblclick', 'td', function (e){
         e.stopPropagation();
