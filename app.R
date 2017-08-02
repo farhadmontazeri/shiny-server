@@ -245,8 +245,8 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
       if(pagenum==1){
         
         
-        shinyjs::show("phqscores")
-        hide("phqcausal")
+        shinyjs::show("phqscores", anim=TRUE,animType = "slide", time=2)
+        hide("phqcausal", anim=TRUE,animType = "slide", time=2)
         hide("qgd")
         
       }
@@ -254,12 +254,12 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
         
         
         
-        
-        hide("phqscores")
+        # session$sendCustomMessage(type = "showhide", message = list( up = "phqscores",down="phqcausal"))
+        hide("phqscores", anim=TRUE,animType = "slide", time=2)
         #hide("qgd")
-        shinyjs::toggle("phqcausal")
-        hide("markdown")
-        hide("report")
+        shinyjs::toggle("phqcausal", anim=TRUE,animType = "slide", time=2)
+        hide("markdown", anim=TRUE,animType = "slide", time=2)
+        hide("report", anim=TRUE,animType = "slide", time=2)
       }else if(pagenum==3){
         m2numeric<<-apply(m2,2,as.numeric)
         hide("phqcausal")
@@ -280,8 +280,10 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
         oddf<<-data.frame("Symptom"=sx, "Outdegree"=od)
         oddf<<-oddf[order(oddf$Outdegree),]
         qgresult<<-qgraph(m2numeric,labels=lbl,bg="#385b39",edge.width=2,edge.color="white",label.scale=F,border.color="white",border.width=3,label.color="white",color=nc,label.font=14,layout="spring",vsize=od*2)
-        shinyjs::show("report")
-        shinyjs::show("markdown")
+        shinyjs::show("report", anim=TRUE,animType = "slide", time=0.5)
+        shinyjs::show("markdown", anim=TRUE,animType = "slide", time=2)
+        #session$sendCustomMessage(type = "showhide", message = list( up = "phqcausal",down="markdown"))
+        #
         
       }#else if(pagenum==4){
         
