@@ -1,19 +1,19 @@
 
 $(document).ready(function () {
     
-	var b;
+	//var b;
 // you might want to write these into if statements to make sure that e.data[0] is varA if you have multiple messages coming across
-if (typeof window.addEventListener != 'undefined') {
+//if (typeof window.addEventListener != 'undefined') {
     window.addEventListener('message', function(e) {
-        b = e.data[1];
+       var b = e.data[1];
 		//alert(b);
 		alert(b);
     }, false);
-} else if (typeof window.attachEvent != 'undefined') { // this part is for IE8
-    window.attachEvent('onmessage', function(e) {
-        b = e.data; // you'll probably have to play around with this part as I can't remember exactly how it comes across in IE8 -- i think it will involve slice() iirc
-    });
-}
+//} else if (typeof window.attachEvent != 'undefined') { // this part is for IE8
+   // window.attachEvent('onmessage', function(e) {
+      //  b = e.data; // you'll probably have to play around with this part as I can't remember exactly how it comes across in IE8 -- i think it will involve slice() iirc
+    //});
+//}
 	
 	
     Shiny.addCustomMessageHandler("myCallbackHandlermarkrow",
@@ -49,7 +49,7 @@ if (typeof window.addEventListener != 'undefined') {
 		    //parent.postMessage(rep,"*");
 			//window.parent.postMessage(['varA', window.rep], '*'); 
                    
-               });     
+             //  });     
 window.removeduplicates = function () {
        
 	 for (var i = 1; i < 10; i++) {
@@ -99,11 +99,11 @@ window.removeduplicates = function () {
             	}
 			}
         }
-    }
+    };
 ///////////////////////////////////////////////
 
    
-   	addtooltip = function (tbl) {
+   var addtooltip = function (tbl) {
        var tts= [' Little interest or pleasure in doing things ',' Feeling down, depressed, or hopeless ','Trouble falling or staying asleep, or sleeping too much ','Feeling tired or having little energy','Poor appetite or overeating',' Feeling bad about yourself '+"�"+' or that you are a failure or \
 have let yourself or your family down ',' Trouble concentrating on things, such as reading the \
 newspaper or watching television','Moving or speaking so slowly that other people could have \
@@ -122,7 +122,7 @@ yourself in some way'];
 	    tdfocus.html('<div class="tooltip">' + tdtxt + '<span class="tooltiptext">' + ttsi + '</span></div>');
    
         }
-   }
+   };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
   //var img = document.images[0];
