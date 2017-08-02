@@ -320,8 +320,11 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
     observeEvent(input$report,{
       session$sendCustomMessage(type = "sendtodevice", message = list( report = h))
     })  
-      
-    
+    observe({
+      if (is.null(input$clienttime)){ 
+        return(NULL)}
+      clientlocaltime<<- input$clienttime
+    })
     
     session$onSessionEnded(stopApp)
     
