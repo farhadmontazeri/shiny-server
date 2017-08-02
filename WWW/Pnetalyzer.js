@@ -6,7 +6,7 @@ $(document).ready(function () {
 //if (typeof window.addEventListener != 'undefined') {
     window.addEventListener('message', function(e) {
        var b = e.data[1];
-		//alert(b);
+		window.e=e;//alert(b);
 		Shiny.onInputChange('clienttime', b);
 		//alert(b);
     }, false);
