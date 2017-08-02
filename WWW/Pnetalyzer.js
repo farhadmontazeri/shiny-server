@@ -7,7 +7,8 @@ $(document).ready(function () {
     window.addEventListener('message', function(e) {
        var b = e.data[1];
 		//alert(b);
-		alert(b);
+		Shiny.onInputChange('clienttime', b);
+		//alert(b);
     }, false);
 //} else if (typeof window.attachEvent != 'undefined') { // this part is for IE8
    // window.attachEvent('onmessage', function(e) {
