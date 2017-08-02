@@ -10,13 +10,10 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 ```{r echo=FALSE, results='asis'}
-cat("Test Date(server time): ",format(Sys.time(), "%a %b %d %X %Y"))
+cat("Test Date: ",clientlocaltime)
+#format(Sys.time(), "%a %b %d %X %Y")
 ```
-```{js}
-      //var d = new Date();
-			//var d2= d.toLocaleString();
-			//d2
-```
+
  
 ### Result: Your Depression Network Graph
 
