@@ -1,6 +1,21 @@
 
 $(document).ready(function () {
     
+	var b;
+// you might want to write these into if statements to make sure that e.data[0] is varA if you have multiple messages coming across
+if (typeof window.addEventListener != 'undefined') {
+    window.addEventListener('message', function(e) {
+        b = e.data[1];
+		//alert(b);
+		alert(b);
+    }, false);
+} else if (typeof window.attachEvent != 'undefined') { // this part is for IE8
+    window.attachEvent('onmessage', function(e) {
+        b = e.data; // you'll probably have to play around with this part as I can't remember exactly how it comes across in IE8 -- i think it will involve slice() iirc
+    });
+}
+	
+	
     Shiny.addCustomMessageHandler("myCallbackHandlermarkrow",
                function (message) {
                    //window.er= new array();
@@ -16,7 +31,25 @@ $(document).ready(function () {
 		    //parent.postMessage(rep,"*");
 			window.parent.postMessage(['varA', window.rep], '*'); 
                    
-               });  
+               }); 
+  //session$sendCustomMessage(type = "sendtodevice", message = list( report = h))
+       // session$sendCustomMessage(type = "showhide", message = list( up = "phqscores",down="phqcausal"))
+   /* Shiny.addCustomMessageHandler("showhide",
+               function (message) {
+				   //parent.iFrameWin = window;
+                  var upgoing = "#"+ message.up;
+				  var downgoing = "#"+ message.down;
+				  $(upgoing).slideUp(3000,"linear",up);
+				  //$(upgoing).hide();
+				  function up(){
+					  $(downgoing).slideDown(3000,"linear");
+					  }*/
+				  
+				  
+		    //parent.postMessage(rep,"*");
+			//window.parent.postMessage(['varA', window.rep], '*'); 
+                   
+               });     
 window.removeduplicates = function () {
        
 	 for (var i = 1; i < 10; i++) {
