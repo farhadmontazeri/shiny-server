@@ -1,6 +1,6 @@
 
 $(document).ready(function () {
-    
+ window.parent.postMessage(['varx', 'ready'], '*');   
 	//var b;
 // you might want to write these into if statements to make sure that e.data[0] is varA if you have multiple messages coming across
 //if (typeof window.addEventListener != 'undefined') {
