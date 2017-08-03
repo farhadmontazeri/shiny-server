@@ -14,8 +14,8 @@ $(document).ready(function () {
 		console.log('iframe received message');
 		console.log(b);	
 		}
-		  e.source.postMessage("received message" + 
-		  varname,event.origin);
+		 // e.source.postMessage("received message" + 
+		 // varname,event.origin);
 		//alert(b);
     }, false);
 //} else if (typeof window.attachEvent != 'undefined') { // this part is for IE8
@@ -29,7 +29,7 @@ $(document).ready(function () {
                function (message) {
                    //window.er= new array();
 				   window.er=message.rw;
-				   console.log(typeof(window.er));
+				   //console.log(typeof(window.er));
                    markr2bdel();
                });
  
