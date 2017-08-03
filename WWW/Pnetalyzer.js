@@ -5,9 +5,17 @@ $(document).ready(function () {
 // you might want to write these into if statements to make sure that e.data[0] is varA if you have multiple messages coming across
 //if (typeof window.addEventListener != 'undefined') {
     window.addEventListener('message', function(e) {
-       var b = e.data[1];
-		window.e=e;//alert(b);
-		Shiny.onInputChange('clienttime', b);
+       var varname=e.data[0];
+	   var b = e.data[1];
+		if(varname=='vart'){
+		
+		//window.e=e;//alert(b);
+		Shiny.onInputChange('clienttime', b);} else if(varname=='allreps'){
+		console.log('iframe received message');
+		console.log(b);	
+		}
+		  e.source.postMessage("received message" + 
+		  varname,event.origin);
 		//alert(b);
     }, false);
 //} else if (typeof window.attachEvent != 'undefined') { // this part is for IE8
