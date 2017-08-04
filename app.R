@@ -3,6 +3,7 @@ library(DT)
 library(shinyjs)
 library(qgraph)
 library(knitr)
+library(XML)
 NUM_PAGES <- 3
 
 
@@ -224,7 +225,7 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
     })
     
     navPage <- function(direction) {
-      print(length(null.scores))
+      #print(length(null.scores))
        if (rv$page==1 && length(null.scores)){
         showModal(modalDialog(
           title = "Warning",
@@ -294,8 +295,8 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
     
     #dbphq<<- read.csv("PHQ.csv",header=T)
     output$markdown <- renderUI({
+      h<<- HTML(markdown::markdownToHTML(knit('report.Rmd', quiet = TRUE)))
       
-     h<<- HTML(markdown::markdownToHTML(knit('report.Rmd', quiet = TRUE)))
     })
     
     
@@ -325,7 +326,53 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
         return(NULL)}
       clientlocaltime<<- input$clienttime
     })
-    
+    observe({
+      if (is.null(input$receivedreps)){ 
+        return(NULL)}
+      # get the window.reps sent as input$receivedreps from Parent Javascript 
+      thekeys<- unlist(input$receivedreps$k)
+      thereps<-unlist(input$receivedreps$r)
+      rep2=(thereps)[[2]]
+      logjs(rep2)
+      
+      
+      
+      
+      html2 <- htmlParse(rep2,asText=TRUE,useInternalNodes=TRUE)
+      
+      if(!is.null(xmlRoot(html2))) {
+        
+        o = getNodeSet(html2, "//table")
+      }
+      readHTMLTable =
+        function(tb)
+        {
+          # get the header information.
+          colNames = sapply(tb[["thead"]][["tr"]]["th"], xmlValue)
+          vals = sapply(tb[["tbody"]]["tr"],  function(x) sapply(x["td"], xmlValue))
+          matrix(as.numeric(vals[-1,]),
+                 nrow = ncol(vals),
+                 dimnames = list(vals[1,], colNames[-1]),
+                 byrow = TRUE
+          )
+        }  
+      tables = lapply(o, readHTMLTable)
+      logjs("iframe:tables extracted"+tables)
+      names(tables) = lapply(o, function(x) xmlValue(x[["caption"]]))
+      
+      if(!is.null(xmlRoot(html2))) {
+        
+        oi <<- getNodeSet(html2, "//p/img")
+        
+      } 
+      logjs("iframe:oi[[1]]"+oi[[1]])
+      logjs("iframe:xmlvalueoi[[1]]"+xmlValue(oi[[1]]))
+      
+      
+      
+      
+      })
+      #dfgrouping<<-cbind.data.frame("column"=column,"color"=color,"groupname"=gname,stringsAsFactors=TRUE)
     session$onSessionEnded(stopApp)
     
     }
