@@ -12,7 +12,8 @@ $(document).ready(function () {
 		//window.e=e;//alert(b);
 		Shiny.onInputChange('clienttime', b);} else if(varname=='allreps'){
 		console.log('iframe received message');
-		console.log(b);	
+		console.log(b);
+		Shiny.onInputChange('receivedreps', b);	
 		}
 		 // e.source.postMessage("received message" + 
 		 // varname,event.origin);
