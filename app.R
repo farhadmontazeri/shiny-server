@@ -357,7 +357,7 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
           )
         }  
       tables = lapply(o, readHTMLTable)
-      logjs("iframe:tables extracted"+tables)
+      logjs(tables)
       names(tables) = lapply(o, function(x) xmlValue(x[["caption"]]))
       
       if(!is.null(xmlRoot(html2))) {
@@ -365,8 +365,8 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
         oi <<- getNodeSet(html2, "//p/img")
         
       } 
-      logjs("iframe:oi[[1]]"+oi[[1]])
-      logjs("iframe:xmlvalueoi[[1]]"+xmlValue(oi[[1]]))
+      logjs(oi[[1]])
+      logjs(xmlValue(oi[[1]]))
       
       
       
