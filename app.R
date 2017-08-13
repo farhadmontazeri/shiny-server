@@ -352,7 +352,8 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
     #thereps<-input$receivedreps$r
     
     testmerge=function (){ 
-      
+      fileName <- file.choose()
+      h2=HTML(readChar(fileName, file.info(fileName)$size))
       thekeys=list() 
       thereps=list()
       thekeys[[1]]="03-01-2017"
