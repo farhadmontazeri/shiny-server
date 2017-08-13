@@ -1,0 +1,47 @@
+                ---
+title: MyDepression Progress Report
+author: MyDepression Application
+date: 7/6/2017
+output: html_document
+---
+
+<style> body{ font-family: 'Oxygen', sans-serif; font-size: 16px; line-height: 24px; } h1,h2,h3,h4 { font-family: 'Raleway', sans-serif; } .container { width: 1000px; } h3 { background-color: #D4DAEC; text-indent: 100px; } h4 { text-indent: 100px; } g-table-intro h4 { text-indent: 0px; } </style>
+
+    ```{r setup, include=FALSE,echo=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+###  Network Graphs
+```{r,echo=FALSE,results='asis'}
+lapply(imgsources,function(x)tags$img(src=x))
+#knitr::asis_output(htmltools::htmlPreserve(
+#paste0('<img src="',xmlAttrs(oi[[1]])[[1]],'">')
+#))
+
+#img(source=xmlAttrs(oi[[1]])[[1]])
+#HTML(xmlAttrs(oi[[1]])[[1]])
+#HTML(paste0('<img src="',xmlAttrs(oi[[1]])[[1]],'">'))
+```
+
+
+###  Symptoms Centrality
+```{r echo=FALSE}
+
+plot(ggplots[[2]])
+
+```
+
+###  Symptoms Severity
+```{r echo=FALSE}
+
+plot(ggplots[[1]])
+
+```
+
+###  Total Depression Score
+```{r echo=FALSE}
+
+plot(ggtotal)
+
+```

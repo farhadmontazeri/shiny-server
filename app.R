@@ -4,7 +4,9 @@ library(shinyjs)
 library(qgraph)
 library(knitr)
 library(XML)
-NUM_PAGES <- 3
+library(reshape2)
+library(ggplot2)
+NUM_PAGES <- 4
 
 
 
@@ -35,7 +37,7 @@ lapply(seq(NUM_PAGES), function(i) {
   hidden(div(
     class = "page",
     id = paste0("step", i),
-    "STEP", i,": ", ifelse(i==1,"Scoring Symptoms",ifelse(i==2,"Causal Relations",ifelse(i==3,"Report","") ))
+    "STEP", i,": ", ifelse(i==1,"Scoring Symptoms",ifelse(i==2,"Causal Relations",ifelse(i==3,"Report",ifelse(i==4,"Progress","") )))
     #ifelse(i==4,"Generate Report","")
     ))
 })),hidden(actionButton("report", "Save Report")),#sliderInput("slider", "Slider", 1, 100, 50),
@@ -45,15 +47,16 @@ lapply(seq(NUM_PAGES), function(i) {
 
 
                  #actionButton("graph","Next"),
-                 DT::dataTableOutput('phqscores'),
+                hidden(DT::dataTableOutput('phqscores')),
                  hidden(DT::dataTableOutput('phqcausal')),
                 # verbatimTextOutput('sel'),
                 # plotOutput("qgd")
-                  hidden(uiOutput('markdown')) 
+                  hidden(uiOutput('markdown')),
+                  hidden(uiOutput('pmarkdown'))
                  #tableOutput('sel')
   ),
   server = function(input, output, session) {
-     rv <- reactiveValues(page = 1)
+     rv <- reactiveValues(page = 4)
     sx<<-c("Little Interest","Feeling Down","Sleep Issues","Fatigue","Appetite Change","Worthlessness","Trouble Concentrate","Slow/Fidgety","Suicidality")
     p.scores<-c("Not at all","Several days","More than half the days","Nearly every day") 
     scores<-vector()
@@ -224,6 +227,181 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
       shinyjs::show(sprintf("step%s", rv$page))
     })
     
+    
+    gettnodes =function(rephtml){
+      htmlparsed <- htmlParse(rephtml,asText=TRUE,useInternalNodes=TRUE)
+      tnodes=NULL
+      imgnodes=NULL
+      if(!is.null(xmlRoot(htmlparsed))) {
+        
+        tnodes = getNodeSet(htmlparsed, "//table")
+        imgnodes = getNodeSet(htmlparsed, "//p/img")
+      }
+      
+      result=list(tnodes,imgnodes) 
+    }
+    
+    
+    
+    #############
+    
+    readHTMLTable <-function(tb){
+      
+      # get the header information.
+      colNames = sapply(tb[["thead"]][["tr"]]["th"], xmlValue)
+      colNames[which(colNames=="")]=paste0("column",which(colNames==""))
+      vals = sapply(tb[["tbody"]]["tr"],  function(x) sapply(x["td"], xmlValue))
+      matrix(as.character(vals),
+             nrow = ncol(vals),
+             ncol=nrow(vals),
+             dimnames = list(c(1:ncol(vals)), colNames),
+             byrow = TRUE
+      )
+    }
+    ######################################
+    ex1s2sts=function(tblset){
+      
+      ts=list()
+      
+      for (i in 1:length(tblset)){
+        
+        ts[[i]]=list() 
+        for (j in 1:length(tblset[[i]])){ 
+          ts[[i]][[j]]= tblset[[j]][[i]]
+          
+        }
+        
+        ts[[i]]
+      }
+      ts
+      
+    }
+    #########################################
+    merging=function(tblgroup){                              
+      #}
+      merge1s=list()
+      
+      for (i in 1:length(tblgroup)){
+        
+        merge1s[[i]]=tblgroup[[i]][[1]]
+        
+        for (j in 2:length(tblgroup[[i]])-1){
+          merge1s[[i]]=merge(merge1s[[i]],tblgroup[[i]][[j+1]],by=c(colnames( tblgroup[[i]][[1]])[1:(ncol(tblgroup[[i]][[1]])-1)]))
+          
+        }
+        merge1s[[i]]
+      }
+      merge1s
+      
+    }
+    #######################
+    removextrarows=function(mergedtable){
+      mt=mergedtable
+      nrmt=nrow(mt)
+      ndate=length(thekeys)
+      nondaterows=nrmt-ndate
+      if (nondaterows!=1){
+        mt=mt[-c(1:nondaterows-1),]
+      }
+      mt=as.data.frame(mt,stringsAsFactors = FALSE) 
+      colnames(mt)=mt[1,]
+      mt=mt[-1,]
+      mt
+      
+    }
+    ########################3
+    getggplot=function(mergedtable){
+      mt=data.frame(m1,row.names = NULL,stringsAsFactors =FALSE)
+      
+      
+      mt=cbind(mt,"date"=rownames(mt)) 
+      
+      # lapply(merged,function(x){colnames(x)[(((ncol(x)-length(thekeys)))+1):ncol(x)] <- format(as.Date(dfrep$keys, format = "%d.%m.%y"),format = "%Y-%m-%d")})
+      
+      
+      mtlong <- melt(mt, id="date")
+      
+      #m1=as.data.frame(mergedtable,stringsAsFactors = FALSE) 
+      # colnames(m1)=m1[1,]
+      
+      #m1=m1[-1,]
+      #m1=cbind(m1,"date"=rownames(m1)) 
+      # lapply(merged,function(x){colnames(x)[(((ncol(x)-length(thekeys)))+1):ncol(x)] <- format(as.Date(dfrep$keys, format = "%d.%m.%y"),format = "%Y-%m-%d")})
+      #m1=data.frame(m1,row.names = NULL,stringsAsFactors =FALSE)
+      
+      #m1long <- melt(m1, id="date")
+      
+      ggplt<<-ggplot(data=mtlong,
+                     aes(x=date, y=value, colour=variable,group = variable)) +
+        geom_line()}
+    
+    getimgsources=function(reportnodeset){
+      imgnodeset=reportnodeset[[2]]
+      
+      
+      imgtag=unlist(lapply(imgnodeset,function(x){ (unlist(xmlAttrs(x)[[1]]))}) )
+      
+    }
+    
+    ########################################3   
+    #  observe({
+    #  if (is.null(input$receivedreps)){ 
+    #   return(NULL)}
+    # get the window.reps sent as input$receivedreps from Parent Javascript 
+    #thekeys<- input$receivedreps$k
+    #thereps<-input$receivedreps$r
+    
+    testmerge=function (){ 
+      
+      thekeys=list() 
+      thereps=list()
+      thekeys[[1]]="03-01-2017"
+      thekeys[[2]]="01-01-2017"
+      thekeys[[3]]="02-01-2017"
+      thereps[[1]]=h
+      thereps[[2]]=h
+      thereps[[3]]=h
+      dfrep=data.frame("keys"= as.Date(unlist(thekeys), format = "%m-%d-%Y"),
+                       "reports"=unlist(thereps),stringsAsFactors = FALSE)
+      
+      dfrep=dfrep[order(dfrep[, 1]), ]
+      
+      os= lapply(dfrep$reports,gettnodes)
+      tablessets=list()
+      for (i in 1:length(os)){
+        tablessets[[i]] = lapply(os[[i]][[1]], readHTMLTable)
+      }
+      onestwos=ex1s2sts(tablessets)
+      
+      merged=merging(onestwos[c(1,3)])
+      for (i in 1:length(merged)){
+        names(merged[[i]])[(((ncol(merged[[i]])-length(thekeys)))+1):ncol(merged[[i]])] <- format(as.Date(dfrep$keys, format = "%d.%m.%y"),
+                                                                                                  format = "%Y-%m-%d")
+        rownames(merged[[i]])=NULL
+        merged[[i]]=t(merged[[i]])
+      }
+      
+      merged=lapply(merged,removextrarows)
+      m1=merged[[1]]
+      m1=lapply(m1,function(x)as.numeric(x))
+      m1=as.data.frame(m1,stringsAsFactors = FALSE)
+      totalscore=apply(m1,1,sum)
+      dftotalscore=data.frame("Report.Date"=rownames(merged[[1]]), "Total.Score"=as.integer(unlist(totalscore)), stringsAsFactors=FALSE)
+      ggtotal<<-ggplot(dftotalscore, aes(x=Report.Date, y=Total.Score,fill=factor(Total.Score)))+geom_bar(stat = "identity",width=0.5,color="red")+geom_text(aes(label=Total.Score), vjust=1.6, color="blue", size=3.5)+scale_fill_brewer(palette="Reds")
+      
+      
+      
+      ggplots=lapply(merged,getggplot)
+      
+      imgsources<<-lapply(os,getimgsources)
+      #########################
+      
+    }
+    
+    
+    
+    
+    
     navPage <- function(direction) {
       #print(length(null.scores))
        if (rv$page==1 && length(null.scores)){
@@ -286,9 +464,11 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
         #session$sendCustomMessage(type = "showhide", message = list( up = "phqcausal",down="markdown"))
         #
         
-      }#else if(pagenum==4){
+      }else if(pagenum==4){
+        testmerge()
+        shinyjs::show("pmarkdown", anim=TRUE,animType = "slide", time=2)
         
-      #}
+     }
       
       
       })
@@ -298,7 +478,10 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
       h<<- HTML(markdown::markdownToHTML(knit('report.Rmd', quiet = TRUE)))
       
     })
-    
+    output$pmarkdown <- renderUI({
+      pmd<<- HTML(markdown::markdownToHTML(rmarkdown::render('preport.Rmd', quiet = TRUE)))
+      
+    })
     
    #output$report <- downloadHandler(
      
@@ -318,6 +501,12 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
        # )
     #  }
    # )
+    
+    
+    
+    
+    
+    
     observeEvent(input$report,{
       session$sendCustomMessage(type = "sendtodevice", message = list( report = h))
     })  
@@ -326,54 +515,13 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
         return(NULL)}
       clientlocaltime<<- input$clienttime
     })
-    observe({
-      if (is.null(input$receivedreps)){ 
-        return(NULL)}
-      # get the window.reps sent as input$receivedreps from Parent Javascript 
-      thekeys<- unlist(input$receivedreps$k)
-      thereps<-unlist(input$receivedreps$r)
-      rep2=(thereps)[[2]]
-      logjs(rep2)
-      
-      
-      
-      
-      html2 <- htmlParse(rep2,asText=TRUE,useInternalNodes=TRUE)
-      
-      if(!is.null(xmlRoot(html2))) {
-        
-        o = getNodeSet(html2, "//table")
-      }
-      readHTMLTable =
-        function(tb)
-        {
-          # get the header information.
-          colNames = sapply(tb[["thead"]][["tr"]]["th"], xmlValue)
-          vals = sapply(tb[["tbody"]]["tr"],  function(x) sapply(x["td"], xmlValue))
-          matrix(as.numeric(vals[-1,]),
-                 nrow = ncol(vals),
-                 dimnames = list(vals[1,], colNames[-1]),
-                 byrow = TRUE
-          )
-        }  
-      tables = lapply(o, readHTMLTable)
-      logjs(tables)
-      names(tables) = lapply(o, function(x) xmlValue(x[["caption"]]))
-      
-      if(!is.null(xmlRoot(html2))) {
-        
-        oi <<- getNodeSet(html2, "//p/img")
-        
-      } 
-      logjs(oi[[1]])
-      logjs(xmlValue(oi[[1]]))
-      
-      
-      
-      
-      })
-      #dfgrouping<<-cbind.data.frame("column"=column,"color"=color,"groupname"=gname,stringsAsFactors=TRUE)
-    session$onSessionEnded(stopApp)
+    
+    
+    
+    
+ ###########################################33333   
+
+   session$onSessionEnded(stopApp)
     
     }
     )
