@@ -354,8 +354,8 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
     testmerge=function (){ 
       fileName <- "h.txt"
       h=HTML(readChar(fileName, file.info(fileName)$size))
-      thekeys=list() 
-      thereps=list()
+      thekeys<<-list() 
+      thereps<<-list()
       thekeys[[1]]="03-01-2017"
       thekeys[[2]]="01-01-2017"
       thekeys[[3]]="02-01-2017"
