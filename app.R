@@ -352,7 +352,7 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
     #thereps<-input$receivedreps$r
     
     testmerge=function (){ 
-      fileName <- file.choose()
+      fileName <- "h.txt"
       h2=HTML(readChar(fileName, file.info(fileName)$size))
       thekeys=list() 
       thereps=list()
