@@ -346,13 +346,15 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
     }
     
     ########################################3   
-    #  observe({
-    #  if (is.null(input$receivedreps)){ 
-    #   return(NULL)}
+     observe({
+      if (is.null(input$receivedreps)){ 
+       return(NULL)}
     # get the window.reps sent as input$receivedreps from Parent Javascript 
-    #thekeys<- input$receivedreps$k
-    #thereps<-input$receivedreps$r
-    
+    thekeys<- input$receivedreps$k
+    thereps<-input$receivedreps$r
+    logjs(thekeys)
+    logjs(thereps)
+  })
     testmerge=function (){ 
       fileName <- "h.txt"
       h=HTML(readChar(fileName, file.info(fileName)$size))
