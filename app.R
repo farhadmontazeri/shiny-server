@@ -47,7 +47,7 @@ lapply(seq(NUM_PAGES), function(i) {
 
 
                  #actionButton("graph","Next"),
-                hidden(DT::dataTableOutput('phqscores')),
+               DT::dataTableOutput('phqscores'),
                  hidden(DT::dataTableOutput('phqcausal')),
                 # verbatimTextOutput('sel'),
                 # plotOutput("qgd")
@@ -56,7 +56,7 @@ lapply(seq(NUM_PAGES), function(i) {
                  #tableOutput('sel')
   ),
   server = function(input, output, session) {
-     rv <- reactiveValues(page = 4)
+     rv <- reactiveValues(page = 1)
     sx<<-c("Little Interest","Feeling Down","Sleep Issues","Fatigue","Appetite Change","Worthlessness","Trouble Concentrate","Slow/Fidgety","Suicidality")
     p.scores<-c("Not at all","Several days","More than half the days","Nearly every day") 
     scores<-vector()
@@ -117,7 +117,7 @@ lapply(seq(NUM_PAGES), function(i) {
        }
        
      }
-     print(null.scores)
+    # print(null.scores)
      session$sendCustomMessage(type = "myCallbackHandlermarkrow", message = list( rw = null.scores))
      
     })
@@ -431,7 +431,7 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
       if(pagenum==1){
         
         
-        shinyjs::show("phqscores", anim=TRUE,animType = "slide", time=2)
+        shinyjs::show("phqscores")#, anim=TRUE,animType = "slide", time=2)
         hide("phqcausal", anim=TRUE,animType = "slide", time=2)
         hide("qgd")
         
@@ -472,6 +472,8 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
         #
         
       }else if(pagenum==4){
+        shinyjs::hide("report")
+        shinyjs::hide("markdown")
         testmerge()
         shinyjs::show("pmarkdown", anim=TRUE,animType = "slide", time=2)
         
