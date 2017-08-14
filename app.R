@@ -63,7 +63,8 @@ lapply(seq(NUM_PAGES), function(i) {
     scorenums<-vector()
     null.scores<<-vector()
     dbphq<<- read.csv("PHQ.csv",header=T,stringsAsFactors = FALSE)
-    
+    thekeys<<-list() 
+    thereps<<-list()
    
     
     m0 <<- matrix(
@@ -354,8 +355,7 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
     testmerge=function (){ 
       fileName <- "h.txt"
       h=HTML(readChar(fileName, file.info(fileName)$size))
-      thekeys<<-list() 
-      thereps<<-list()
+      
       thekeys[[1]]="03-01-2017"
       thekeys[[2]]="01-01-2017"
       thekeys[[3]]="02-01-2017"
