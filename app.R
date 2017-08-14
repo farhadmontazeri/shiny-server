@@ -286,11 +286,11 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
         
         merge1s[[i]]=tblgroup[[i]][[1]]
         
-        for (j in 2:length(tblgroup[[i]])-1){
-          merge1s[[i]]=merge(merge1s[[i]],tblgroup[[i]][[j+1]],by=c(colnames( tblgroup[[i]][[1]])[1:(ncol(tblgroup[[i]][[1]])-1)]))
+        for (j in 2:length(tblgroup[[i]])){
+          merge1s[[i]]=merge(merge1s[[i]],tblgroup[[i]][[j]],by=c(colnames( tblgroup[[i]][[1]])[1:(ncol(tblgroup[[i]][[1]])-1)]))
           
         }
-        merge1s[[i]]
+        
       }
       merge1s
       
@@ -312,7 +312,8 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
     }
     ########################3
     getggplot=function(mergedtable){
-      mt=data.frame(m1,row.names = NULL,stringsAsFactors =FALSE)
+      
+      mt=data.frame(mergedtable,row.names = NULL,stringsAsFactors =FALSE)
       
       
       mt=cbind(mt,"date"=rownames(mt)) 
@@ -332,9 +333,9 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
       
       #m1long <- melt(m1, id="date")
       
-      ggplt<<-ggplot(data=mtlong,
-                     aes(x=date, y=value, colour=variable,group = variable)) +
-        geom_line()}
+      ggplt<-ggplot(data=mtlong,aes(x=date, y=value, colour=variable,group = variable)) +geom_line()
+      ggplt
+      }
     
     getimgsources=function(reportnodeset){
       imgnodeset=reportnodeset[[2]]
@@ -383,12 +384,14 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
       }
       
       merged=lapply(merged,removextrarows)
+      
+      
       m1=merged[[1]]
       m1=lapply(m1,function(x)as.numeric(x))
       m1=as.data.frame(m1,stringsAsFactors = FALSE)
       totalscore=apply(m1,1,sum)
       logjs(totalscore)
-      dftotalscore=data.frame("Report.Date"=unlist(rownames(merged[[1]])), "Total.Score"=as.integer(unlist(totalscore)), stringsAsFactors=FALSE)
+      dftotalscore=data.frame("Report.Date"=rownames(merged[[1]]), "Total.Score"=as.integer(totalscore), stringsAsFactors=FALSE)
       ggtotal<<-ggplot(dftotalscore, aes(x=Report.Date, y=Total.Score,fill=factor(Total.Score)))+geom_bar(stat = "identity",width=0.5,color="red")+geom_text(aes(label=Total.Score), vjust=1.6, color="blue", size=3.5)+scale_fill_brewer(palette="Reds")
       
       
