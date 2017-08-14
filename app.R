@@ -396,7 +396,7 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
       
       
       
-      ggplots=lapply(merged,getggplot)
+      ggplots<<-lapply(merged,getggplot)
       
       imgsources<<-lapply(os,getimgsources)
       #########################
