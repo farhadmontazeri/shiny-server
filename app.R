@@ -56,15 +56,16 @@ lapply(seq(NUM_PAGES), function(i) {
                  #tableOutput('sel')
   ),
   server = function(input, output, session) {
-     rv <- reactiveValues(page = 1)
+     rv <- reactiveValues(page = 1,m2=NULL,scores=vector())
     sx<<-c("Little Interest","Feeling Down","Sleep Issues","Fatigue","Appetite Change","Worthlessness","Trouble Concentrate","Slow/Fidgety","Suicidality")
     p.scores<-c("Not at all","Several days","More than half the days","Nearly every day") 
-    scores<-vector()
+    
     scorenums<-vector()
     null.scores<<-vector()
+    qg<<-NULL
+    od<<-NULL
     dbphq<<- read.csv("PHQ.csv",header=T,stringsAsFactors = FALSE)
-    thekeys<<-list() 
-    thereps<<-list()
+  
    
     
     m0 <<- matrix(
@@ -109,10 +110,10 @@ lapply(seq(NUM_PAGES), function(i) {
     
     observe({
       input$phqscores
-     scores<<- sapply(sx, function(i) input[[i]])
+     rv$scores<- sapply(sx, function(i) input[[i]])
      null.scores<<-vector()
-     for (i in 1:length(scores)){
-       if (is.null(scores[[i]])){
+     for (i in 1:length(rv$scores)){
+       if (is.null(rv$scores[[i]])){
          null.scores<<-c(null.scores,i)
        }
        
@@ -212,7 +213,7 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
           m[r,c]<-1
           m[m!=1]<-0
         }
-        m2<<-as.matrix(m)
+        rv$m2<<-as.matrix(m)
         as.matrix(m)
       }
       
@@ -350,34 +351,36 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
       if (is.null(input$receivedreps)){ 
        return(NULL)}
     # get the window.reps sent as input$receivedreps from Parent Javascript 
-    thekeys<- input$receivedreps$k
+    rv$page=4
+       thekeys<- input$receivedreps$k
     thereps<-input$receivedreps$r
-    logjs(thekeys)
-    logjs(thereps)
-  })
-    testmerge=function (){ 
-      fileName <- "h.txt"
-      h=HTML(readChar(fileName, file.info(fileName)$size))
+    #shinyjs::alert(thekeys)[[1]]
+    #shinyjs::alert(thereps)[[1]]
+  #})
+   # testmerge=function (){ 
+     # fileName <- file.choose()
+    #  h1=HTML(readChar(fileName, file.info(fileName)$size))
+     # fileName <- file.choose()
+    #  h2=HTML(readChar(fileName, file.info(fileName)$size))
+     # fileName <- file.choose()
+    #  h3=HTML(readChar(fileName, file.info(fileName)$size))
+     # thekeys<<-as.list(c("8/14/2017, 9:42:49 PM","8/14/2017, 9:43:42 PM","8/14/2017, 9:47:58 PM"))
+      thekeys<<-lapply(thekeys,function(x)as.Date(strptime(x,format="%m/%d/%Y, %I:%M:%S %p")))
+      #thereps<<-as.list(c(h1,h2,h3))
       
-      thekeys[[1]]<<-"03-01-2017"
-      thekeys[[2]]<<-"01-01-2017"
-      thekeys[[3]]<<-"02-01-2017"
-      thereps[[1]]<<-h
-      thereps[[2]]<<-h
-      thereps[[3]]<<-h
-      dfrep=data.frame("keys"= as.Date(unlist(thekeys), format = "%m-%d-%Y"),
+      dfrep=data.frame("keys"= as.Date(unlist(thekeys),origin="1970-01-01"),#unlist(as.Date(thekeys, format = "%Y/%d/%m")),
                        "reports"=unlist(thereps),stringsAsFactors = FALSE)
       
       dfrep=dfrep[order(dfrep[, 1]), ]
       
-      os= lapply(dfrep$reports,gettnodes)
+      os= lapply(thereps,gettnodes)
       tablessets=list()
       for (i in 1:length(os)){
         tablessets[[i]] = lapply(os[[i]][[1]], readHTMLTable)
       }
       onestwos=ex1s2sts(tablessets)
       
-      merged=merging(onestwos[c(1,3)])
+      merged=merging(onestwos[c(1,2)])
       for (i in 1:length(merged)){
         names(merged[[i]])[(((ncol(merged[[i]])-length(thekeys)))+1):ncol(merged[[i]])] <- format(as.Date(dfrep$keys, format = "%d.%m.%y"),
                                                                                                   format = "%Y-%m-%d")
@@ -403,7 +406,7 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
       imgsources<<-lapply(os,getimgsources)
       #########################
       
-    }
+    })
     
     
     
@@ -432,7 +435,7 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
         
         
         shinyjs::show("phqscores")#, anim=TRUE,animType = "slide", time=2)
-        hide("phqcausal", anim=TRUE,animType = "slide", time=2)
+        hide("phqcausal")
         hide("qgd")
         
       }
@@ -441,36 +444,55 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
         
         
         # session$sendCustomMessage(type = "showhide", message = list( up = "phqscores",down="phqcausal"))
-        hide("phqscores", anim=TRUE,animType = "slide", time=2)
+        hide("phqscores")
         #hide("qgd")
-        shinyjs::toggle("phqcausal", anim=TRUE,animType = "slide", time=2)
+        shinyjs::toggle("phqcausal")
         hide("markdown", anim=TRUE,animType = "slide", time=2)
         hide("report", anim=TRUE,animType = "slide", time=2)
       }else if(pagenum==3){
-        m2numeric<<-apply(m2,2,as.numeric)
+        
         hide("phqcausal")
         #shinyjs::show("qgd")
-        qg<-qgraph(m2numeric,layout="spring")
-        
-        od<-centrality(qg)$OutDegree
-
-        for (i in 1:length(scores)){
+        observe({
+         rv$m2 
           
-          scorenums=c(scorenums,scores[[i]])
+         m2numeric<<-apply(rv$m2,2,as.numeric)
+          
+           qg<<-qgraph(m2numeric,layout="spring")
+           rv$od<<-centrality(qg)$OutDegree
+
+         for (i in 1:length(rv$scores)){
+          
+          scorenums=c(scorenums,rv$scores[[i]])
         }
-        sn<-as.integer(scorenums)
-        r<-sn*(255%/%(max(sn)))
-        nc<-rgb(255,0,0,alpha=r, maxColorValue = 255)
+        #sn<-as.integer(scorenums)
+       # r<-sn*(255%/%(max(sn)))
+       # nc<-rgb(r,0,0, maxColorValue = 255)
         lbl=c("Interest","Down","Sleep","Tired","Appetite","Worthless","Concentrate","slow/fidgety","Suicide")
-        #lbl=paste(lbltitle,od,sep="-")
-        oddf<<-data.frame("Symptom"=sx, "Outdegree"=od)
-        oddf<<-oddf[order(oddf$Outdegree),]
-        qgresult<<-qgraph(m2numeric,labels=lbl,bg="#385b39",edge.width=2,edge.color="white",label.scale=F,border.color="white",border.width=3,label.color="white",color=nc,label.font=14,layout="spring",vsize=od*2)
+        
+        
+      oddf<<-data.frame("Symptom"=sx, "Outdegree"=rv$od)
+      oddf<<-oddf[order(-oddf$Outdegree),] 
+      
+   
+        
+        qgresult<<-qgraph(apply(rv$m2,2,as.numeric),labels=lbl,bg="#385b39",edge.width=2,edge.color="white",label.scale=F,border.color="white",border.width=3,label.color="white",color="red",label.font=14,layout="spring",vsize=rv$od*2)
+          
+        
+          
+        })
+        
         shinyjs::show("report", anim=TRUE,animType = "slide", time=0.5)
+        output$markdown <- renderUI({
+          
+          h<<- HTML(markdown::markdownToHTML(knit('report.Rmd', quiet = TRUE)))
+          
+        })
+        
         shinyjs::show("markdown", anim=TRUE,animType = "slide", time=2)
         #session$sendCustomMessage(type = "showhide", message = list( up = "phqcausal",down="markdown"))
         #
-        
+    
       }else if(pagenum==4){
         shinyjs::hide("report")
         shinyjs::hide("markdown")
@@ -483,10 +505,7 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
       })
     
     #dbphq<<- read.csv("PHQ.csv",header=T)
-    output$markdown <- renderUI({
-      h<<- HTML(markdown::markdownToHTML(knit('report.Rmd', quiet = TRUE)))
-      
-    })
+   
     output$pmarkdown <- renderUI({
       pmd<<- HTML(markdown::markdownToHTML(rmarkdown::render('preport.Rmd', quiet = TRUE)))
       

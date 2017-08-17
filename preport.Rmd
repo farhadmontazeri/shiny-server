@@ -28,14 +28,14 @@ lapply(imgsources,function(x)tags$img(src=x))
 ###  Symptoms Centrality
 ```{r echo=FALSE}
 
-plot(ggplots[[2]])
+plot(ggplots[[1]])
 
 ```
 
 ###  Symptoms Severity
 ```{r echo=FALSE}
 
-plot(ggplots[[1]])
+plot(ggplots[[2]])
 
 ```
 
