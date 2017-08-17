@@ -54,7 +54,7 @@ kable(mscores,caption="PHQ-9 Scores")
 ```{r echo=FALSE, results='asis'}
 totalscore<-sum(as.numeric(rv$scores))
 rownumber=which(apply(dbphq,1,function(x){totalscore %in% eval(parse(text=x[[1]]))})==TRUE)
-cat(paste0("Based on the abobe-mentioned scores your total score is ",bold(totalscore)," ,which translates to a severity of ",bold(dbphq[rownumber,2]),".Based on this score, PHQ-9 suggests the following course of action : ",bold(dbphq[rownumber,3]) )) 
+cat(paste0("Based on the abobe-mentioned scores your total score is ",totalscore," ,which translates to a severity of ",dbphq[rownumber,2],".Based on this score, PHQ-9 suggests the following course of action : ",dbphq[rownumber,3] )) 
 ```
 
 
