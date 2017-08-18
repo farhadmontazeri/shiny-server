@@ -351,9 +351,10 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
       if (is.null(input$receivedreps)){ 
        return(NULL)}
     # get the window.reps sent as input$receivedreps from Parent Javascript 
-    rv$page=4
+    logjs("reports received by iframe")
        thekeys<- input$receivedreps$k
     thereps<-input$receivedreps$r
+    rv$page=4
     #shinyjs::alert(thekeys)[[1]]
     #shinyjs::alert(thereps)[[1]]
   #})
@@ -395,7 +396,7 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
       m1=lapply(m1,function(x)as.numeric(x))
       m1=as.data.frame(m1,stringsAsFactors = FALSE)
       totalscore=apply(m1,1,sum)
-      logjs(totalscore)
+      #logjs(totalscore)
       dftotalscore=data.frame("Report.Date"=rownames(merged[[1]]), "Total.Score"=as.integer(totalscore), stringsAsFactors=FALSE)
       ggtotal<<-ggplot(dftotalscore, aes(x=Report.Date, y=Total.Score,fill=factor(Total.Score)))+geom_bar(stat = "identity",width=0.5,color="red")+geom_text(aes(label=Total.Score), vjust=1.6, color="blue", size=3.5)+scale_fill_brewer(palette="Reds")
       
@@ -496,7 +497,7 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
       }else if(pagenum==4){
         shinyjs::hide("report")
         shinyjs::hide("markdown")
-        testmerge()
+        #testmerge()
         shinyjs::show("pmarkdown", anim=TRUE,animType = "slide", time=2)
         
      }
