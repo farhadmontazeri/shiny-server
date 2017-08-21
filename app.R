@@ -56,20 +56,15 @@ lapply(seq(NUM_PAGES), function(i) {
                  #tableOutput('sel')
   ),
   server = function(input, output, session) {
-     rv <- reactiveValues(page = NULL,m2=NULL,scores=vector())
-     rvpage<-NULL
+     rv <- reactiveValues(page = integer(),m2=NULL,scores=vector())
      
-      observe({
-      # if (is.null(input$pagenumber)){ 
-       #  return(NULL)}
-       rvpage<<- input$pagenumber
-      routes(rvpage)
-       
-       
-     })
-    routes= function(pagenum){ 
-     if (is.null(pagenum)){
-     }else if(is.null(pagenum)==FALSE && pagenum!=4){
+     
+     
+      
+    routes= function(pagenumb){ 
+      logjs(paste0("routes function entered with pagenumb: ",pagenumb) )
+     if (is.null(pagenumb)){
+     }else if( pagenumb!=4){
      
      sx<<-c("Little Interest","Feeling Down","Sleep Issues","Fatigue","Appetite Change","Worthlessness","Trouble Concentrate","Slow/Fidgety","Suicidality")
     p.scores<-c("Not at all","Several days","More than half the days","Nearly every day") 
@@ -374,7 +369,7 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
     
     
     
-     } else if (pagenum==4){
+     } else if(pagenumb==4){
     #######????????????????????????????????????????????????????????????????????????????????????????????????
    
     
@@ -567,6 +562,15 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
       shinyjs::show("pmarkdown")
        }
     }
+    
+    observe({
+      #if (is.null(input$pagenumber)){ 
+      # return(NULL)}
+      rvpage<<- input$pagenumber
+      routes(rvpage)
+      # logjs("rvpage is",rvpage)
+      
+    })
     
     
     
