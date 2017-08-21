@@ -1,6 +1,6 @@
 
 $(document).ready(function () {
- window.parent.iframeLoaded();
+ 
  if(!window.console){ window.console = {log: function(){} }; } ;
  //window.parent.postMessage(['varx', 'ready'], '*');   
 	//var b;
@@ -137,7 +137,9 @@ yourself in some way'];
 	    tdfocus.html('<div class="tooltip">' + tdtxt + '<span class="tooltiptext">' + ttsi + '</span></div>');
    
         }
+		
    };
+  
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
   //var img = document.images[0];
@@ -152,3 +154,6 @@ yourself in some way'];
 
 
 });
+ $(document).load(function () {
+	   window.parent.postMessage(['varx', 'ready'], '*');
+   });
