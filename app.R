@@ -566,9 +566,9 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
     observe({
       #if (is.null(input$pagenumber)){ 
       # return(NULL)}
-      rvpage<<- input$pagenumber
+      rvpage<- input$pagenumber
       routes(rvpage)
-      # logjs("rvpage is",rvpage)
+      logjs(paste0("rvpage is",rvpage))
       
     })
     
