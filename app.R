@@ -67,7 +67,7 @@ lapply(seq(NUM_PAGES), function(i) {
        
        
      })
-    routs= function(pagenum){ 
+    routes= function(pagenum){ 
      if (is.null(pagenum)){
      }else if(is.null(pagenum)==FALSE && pagenum!=4){
      
