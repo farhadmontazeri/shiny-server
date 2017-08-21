@@ -1,8 +1,8 @@
 window.load(function() {
-    parent.iframeLoaded();
+    window.parent.iframeLoaded();
 });
 $(document).ready(function () {
- parent.iframeLoaded();
+ //parent.iframeLoaded();
  if(!window.console){ window.console = {log: function(){} }; } ;
  //window.parent.postMessage(['varx', 'ready'], '*');   
 	//var b;
