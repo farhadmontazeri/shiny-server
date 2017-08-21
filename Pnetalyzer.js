@@ -139,9 +139,7 @@ yourself in some way'];
         }
 		
    };
-   $(document).load(function () {
-	   window.parent.iframeLoaded();
-   });
+  
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
   //var img = document.images[0];
@@ -156,3 +154,6 @@ yourself in some way'];
 
 
 });
+ $(document).load(function () {
+	   window.parent.iframeLoaded();
+   });
