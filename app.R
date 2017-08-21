@@ -56,8 +56,22 @@ lapply(seq(NUM_PAGES), function(i) {
                  #tableOutput('sel')
   ),
   server = function(input, output, session) {
-     rv <- reactiveValues(page = 1,m2=NULL,scores=vector())
-    sx<<-c("Little Interest","Feeling Down","Sleep Issues","Fatigue","Appetite Change","Worthlessness","Trouble Concentrate","Slow/Fidgety","Suicidality")
+     rv <- reactiveValues(page = NULL,m2=NULL,scores=vector())
+     rvpage<-NULL
+     
+      observe({
+      # if (is.null(input$pagenumber)){ 
+       #  return(NULL)}
+       rvpage<<- input$pagenumber
+      routes(rvpage)
+       
+       
+     })
+    routs= function(pagenum){ 
+     if (is.null(pagenum)){
+     }else if(is.null(pagenum)==FALSE && pagenum!=4){
+     
+     sx<<-c("Little Interest","Feeling Down","Sleep Issues","Fatigue","Appetite Change","Worthlessness","Trouble Concentrate","Slow/Fidgety","Suicidality")
     p.scores<-c("Not at all","Several days","More than half the days","Nearly every day") 
     
     scorenums<-vector()
@@ -66,6 +80,16 @@ lapply(seq(NUM_PAGES), function(i) {
     od<<-NULL
     dbphq<<- read.csv("PHQ.csv",header=T,stringsAsFactors = FALSE)
   
+    observe({
+      toggleState(id = "prevBtn", condition = rv$page > 1)
+      toggleState(id = "nextBtn", condition = rv$page < NUM_PAGES)
+      hide(selector = ".page")
+      shinyjs::show(sprintf("step%s", rv$page))
+    })
+    
+    
+    
+    
    
     
     m0 <<- matrix(
@@ -220,14 +244,141 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
       #str(sapply(sx, function(i) input[[i]]))
     })
     
+    navPage <- function(direction) {
+      #print(length(null.scores))
+      if (rv$page==1 && length(null.scores)){
+        showModal(modalDialog(
+          title = "Warning",
+          paste0("Please select a score for the highlighted symptom",ifelse(length(null.scores)>1,"s.","."))
+        )) 
+        
+      }else{
+        rv$page <- rv$page + direction
+        # pagenum<<-rv$page
+        # rv$page
+      }
+    }
     
-    
+    observeEvent(input$prevBtn, navPage(-1))
+    observeEvent(input$nextBtn, navPage(1))
     observe({
-      toggleState(id = "prevBtn", condition = rv$page > 1)
-      toggleState(id = "nextBtn", condition = rv$page < NUM_PAGES)
-      hide(selector = ".page")
-      shinyjs::show(sprintf("step%s", rv$page))
+      pagenum<-rv$page
+      if(pagenum==1){
+        
+        
+        shinyjs::show("phqscores")#, anim=TRUE,animType = "slide", time=2)
+        hide("phqcausal")
+        hide("qgd")
+        
+      }
+      else if (pagenum==2){
+        
+        
+        
+        # session$sendCustomMessage(type = "showhide", message = list( up = "phqscores",down="phqcausal"))
+        hide("phqscores")
+        #hide("qgd")
+        shinyjs::toggle("phqcausal")
+        hide("markdown", anim=TRUE,animType = "slide", time=2)
+        hide("report", anim=TRUE,animType = "slide", time=2)
+      }else if(pagenum==3){
+        
+        hide("phqcausal")
+        #shinyjs::show("qgd")
+        observe({
+          rv$m2 
+          
+          m2numeric<<-apply(rv$m2,2,as.numeric)
+          
+          qg<<-qgraph(m2numeric,layout="spring")
+          rv$od<<-centrality(qg)$OutDegree
+          
+          for (i in 1:length(rv$scores)){
+            
+            scorenums=c(scorenums,rv$scores[[i]])
+          }
+          #sn<-as.integer(scorenums)
+          # r<-sn*(255%/%(max(sn)))
+          # nc<-rgb(r,0,0, maxColorValue = 255)
+          lbl=c("Interest","Down","Sleep","Tired","Appetite","Worthless","Concentrate","slow/fidgety","Suicide")
+          
+          
+          oddf<<-data.frame("Symptom"=sx, "Outdegree"=rv$od)
+          oddf<<-oddf[order(-oddf$Outdegree),] 
+          
+          
+          
+          qgresult<<-qgraph(apply(rv$m2,2,as.numeric),labels=lbl,bg="#385b39",edge.width=2,edge.color="white",label.scale=F,border.color="white",border.width=3,label.color="white",color="red",label.font=14,layout="spring",vsize=rv$od*2)
+          
+          
+          
+        })
+        
+        shinyjs::show("report", anim=TRUE,animType = "slide", time=0.5)
+        output$markdown <- renderUI({
+          
+          h<<- HTML(markdown::markdownToHTML(knit('report.Rmd', quiet = TRUE)))
+          
+        })
+        
+        shinyjs::show("markdown", anim=TRUE,animType = "slide", time=2)
+        #session$sendCustomMessage(type = "showhide", message = list( up = "phqcausal",down="markdown"))
+        #
+        
+      }#else if(pagenum==4){
+        #shinyjs::hide("report")
+        #shinyjs::hide("markdown")
+        #testmerge()
+        #shinyjs::show("pmarkdown")
+        
+      #}
+      
+      
     })
+    
+    #dbphq<<- read.csv("PHQ.csv",header=T)
+    
+    
+    #output$report <- downloadHandler(
+    
+    # filename = "report.html",
+    # content = function(file) {
+    
+    ## tempReport <- file.path(tempdir(), "report.Rmd")
+    ## file.copy("report.Rmd", tempReport, overwrite = TRUE)
+    #f<<-file
+    
+    #params <- list(n = input$slider)
+    
+    # rmarkdown::render("report.Rmd", output_file = file,
+    # params = params,
+    # envir = new.env(parent = globalenv())
+    
+    # )
+    #  }
+    # )
+    
+    
+    
+    
+    
+    
+    observeEvent(input$report,{
+      session$sendCustomMessage(type = "sendtodevice", message = list( report = h))
+    })  
+    observe({
+      if (is.null(input$clienttime)){ 
+        return(NULL)}
+      clientlocaltime<<- input$clienttime
+    })
+    
+    
+    
+     } else if (pagenum==4){
+    #######????????????????????????????????????????????????????????????????????????????????????????????????
+   
+    
+   
     
     
     gettnodes =function(rephtml){
@@ -351,10 +502,10 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
       if (is.null(input$receivedreps)){ 
        return(NULL)}
     # get the window.reps sent as input$receivedreps from Parent Javascript 
-    logjs("reports received by iframe")
+    #logjs("reports received by iframe")
        thekeys<- input$receivedreps$k
     thereps<-input$receivedreps$r
-    rv$page=4
+   # rv$page=4
     #shinyjs::alert(thekeys)[[1]]
     #shinyjs::alert(thereps)[[1]]
   #})
@@ -408,142 +559,15 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
       #########################
       
     })
-    
-    
-    
-    
-    
-    navPage <- function(direction) {
-      #print(length(null.scores))
-       if (rv$page==1 && length(null.scores)){
-        showModal(modalDialog(
-          title = "Warning",
-          paste0("Please select a score for the highlighted symptom",ifelse(length(null.scores)>1,"s.","."))
-        )) 
+     
+      output$pmarkdown <- renderUI({
+        pmd<<- HTML(markdown::markdownToHTML(rmarkdown::render('preport.Rmd', quiet = TRUE)))
         
-       }else{
-        rv$page <- rv$page + direction
-       # pagenum<<-rv$page
-       # rv$page
-        }
+      })
+      shinyjs::show("pmarkdown")
+       }
     }
     
-    observeEvent(input$prevBtn, navPage(-1))
-    observeEvent(input$nextBtn, navPage(1))
-    observe({
-      pagenum<-rv$page
-      if(pagenum==1){
-        
-        
-        shinyjs::show("phqscores")#, anim=TRUE,animType = "slide", time=2)
-        hide("phqcausal")
-        hide("qgd")
-        
-      }
-      else if (pagenum==2){
-        
-        
-        
-        # session$sendCustomMessage(type = "showhide", message = list( up = "phqscores",down="phqcausal"))
-        hide("phqscores")
-        #hide("qgd")
-        shinyjs::toggle("phqcausal")
-        hide("markdown", anim=TRUE,animType = "slide", time=2)
-        hide("report", anim=TRUE,animType = "slide", time=2)
-      }else if(pagenum==3){
-        
-        hide("phqcausal")
-        #shinyjs::show("qgd")
-        observe({
-         rv$m2 
-          
-         m2numeric<<-apply(rv$m2,2,as.numeric)
-          
-           qg<<-qgraph(m2numeric,layout="spring")
-           rv$od<<-centrality(qg)$OutDegree
-
-         for (i in 1:length(rv$scores)){
-          
-          scorenums=c(scorenums,rv$scores[[i]])
-        }
-        #sn<-as.integer(scorenums)
-       # r<-sn*(255%/%(max(sn)))
-       # nc<-rgb(r,0,0, maxColorValue = 255)
-        lbl=c("Interest","Down","Sleep","Tired","Appetite","Worthless","Concentrate","slow/fidgety","Suicide")
-        
-        
-      oddf<<-data.frame("Symptom"=sx, "Outdegree"=rv$od)
-      oddf<<-oddf[order(-oddf$Outdegree),] 
-      
-   
-        
-        qgresult<<-qgraph(apply(rv$m2,2,as.numeric),labels=lbl,bg="#385b39",edge.width=2,edge.color="white",label.scale=F,border.color="white",border.width=3,label.color="white",color="red",label.font=14,layout="spring",vsize=rv$od*2)
-          
-        
-          
-        })
-        
-        shinyjs::show("report", anim=TRUE,animType = "slide", time=0.5)
-        output$markdown <- renderUI({
-          
-          h<<- HTML(markdown::markdownToHTML(knit('report.Rmd', quiet = TRUE)))
-          
-        })
-        
-        shinyjs::show("markdown", anim=TRUE,animType = "slide", time=2)
-        #session$sendCustomMessage(type = "showhide", message = list( up = "phqcausal",down="markdown"))
-        #
-    
-      }else if(pagenum==4){
-        shinyjs::hide("report")
-        shinyjs::hide("markdown")
-        #testmerge()
-        shinyjs::show("pmarkdown", anim=TRUE,animType = "slide", time=2)
-        
-     }
-      
-      
-      })
-    
-    #dbphq<<- read.csv("PHQ.csv",header=T)
-   
-    output$pmarkdown <- renderUI({
-      pmd<<- HTML(markdown::markdownToHTML(rmarkdown::render('preport.Rmd', quiet = TRUE)))
-      
-    })
-    
-   #output$report <- downloadHandler(
-     
-     # filename = "report.html",
-     # content = function(file) {
-        
-       ## tempReport <- file.path(tempdir(), "report.Rmd")
-       ## file.copy("report.Rmd", tempReport, overwrite = TRUE)
-        #f<<-file
-        
-        #params <- list(n = input$slider)
-        
-       # rmarkdown::render("report.Rmd", output_file = file,
-                         # params = params,
-                         # envir = new.env(parent = globalenv())
-                          
-       # )
-    #  }
-   # )
-    
-    
-    
-    
-    
-    
-    observeEvent(input$report,{
-      session$sendCustomMessage(type = "sendtodevice", message = list( report = h))
-    })  
-    observe({
-      if (is.null(input$clienttime)){ 
-        return(NULL)}
-      clientlocaltime<<- input$clienttime
-    })
     
     
     
