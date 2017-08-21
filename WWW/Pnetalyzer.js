@@ -1,20 +1,26 @@
-
+window.onload = function() {
+   // parent.iframeLoaded();
+};
 $(document).ready(function () {
- window.parent.postMessage(['varx', 'ready'], '*');   
+ if(!window.console){ window.console = {log: function(){} }; } ;
+ //window.parent.postMessage(['varx', 'ready'], '*');   
 	//var b;
 // you might want to write these into if statements to make sure that e.data[0] is varA if you have multiple messages coming across
 //if (typeof window.addEventListener != 'undefined') {
     window.addEventListener('message', function(e) {
        var varname=e.data[0];
 	   var b = e.data[1];
-		if(varname=='vart'){
+		console.log('iframe received a message,variable name is: ',varname,' and data is: ',b);
 		
-		//window.e=e;//alert(b);
-		Shiny.onInputChange('clienttime', b);} else if(varname=='allreps'){
-		console.log('iframe received message');
-		console.log(b);
-		Shiny.onInputChange('receivedreps', b);	
-		}
+		if(varname=='vart'){
+
+			Shiny.onInputChange('clienttime', b);
+			} else if(varname=='allreps'){
+							
+			Shiny.onInputChange('receivedreps', b);	
+			}else if(varname=='pageno'){
+			Shiny.onInputChange('pagenumber', b);	
+			}
 		 // e.source.postMessage("received message" + 
 		 // varname,event.origin);
 		//alert(b);
@@ -40,7 +46,7 @@ $(document).ready(function () {
                    window.rep = message.report;
 		    //parent.postMessage(rep,"*");
 			window.parent.postMessage(['varA', window.rep], '*'); 
-                   
+             console.log('iframe sent variable: varA','containing data: ',window.rep);      
                }); 
   //session$sendCustomMessage(type = "sendtodevice", message = list( report = h))
        // session$sendCustomMessage(type = "showhide", message = list( up = "phqscores",down="phqcausal"))
