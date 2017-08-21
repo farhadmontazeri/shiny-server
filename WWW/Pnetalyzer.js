@@ -1,5 +1,5 @@
 window.onload = function() {
-   // parent.iframeLoaded();
+    parent.iframeLoaded();
 };
 $(document).ready(function () {
  if(!window.console){ window.console = {log: function(){} }; } ;
