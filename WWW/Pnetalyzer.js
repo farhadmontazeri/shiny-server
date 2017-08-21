@@ -1,6 +1,6 @@
-window.onload = function() {
+window.load(function() {
     parent.iframeLoaded();
-};
+});
 $(document).ready(function () {
  if(!window.console){ window.console = {log: function(){} }; } ;
  //window.parent.postMessage(['varx', 'ready'], '*');   
