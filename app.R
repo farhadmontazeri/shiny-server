@@ -56,15 +56,23 @@ lapply(seq(NUM_PAGES), function(i) {
                  #tableOutput('sel')
   ),
   server = function(input, output, session) {
-     rv <- reactiveValues(page = integer(),m2=NULL,scores=vector())
+     rv <- reactiveValues(page = 1,m2=NULL,scores=vector())
      
+     observe({
+       if (is.null(input$pagenumber)){ 
+         return(NULL)}
+       rv$page<- input$pagenumber
+       #routes(rvpage)
+       logjs(paste0("rv$page is",rv$page))
+       
+     })
      
      
       
-    routes= function(pagenumb){ 
-      logjs(paste0("routes function entered with pagenumb: ",pagenumb) )
-     if (is.null(pagenumb)){
-     }else if( pagenumb!=4){
+#routes= function(pagenumb){ 
+     # logjs(paste0("routes function entered with pagenumb: ",pagenumb) )
+     #if (is.null(pagenumb)){
+     #}else if( pagenumb==1){
      
      sx<<-c("Little Interest","Feeling Down","Sleep Issues","Fatigue","Appetite Change","Worthlessness","Trouble Concentrate","Slow/Fidgety","Suicidality")
     p.scores<-c("Not at all","Several days","More than half the days","Nearly every day") 
@@ -257,6 +265,8 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
     observeEvent(input$prevBtn, navPage(-1))
     observeEvent(input$nextBtn, navPage(1))
     observe({
+      if (is.null(rv$page)){
+        return(NULL)}else{
       pagenum<-rv$page
       if(pagenum==1){
         
@@ -320,16 +330,13 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
         #session$sendCustomMessage(type = "showhide", message = list( up = "phqcausal",down="markdown"))
         #
         
-      }#else if(pagenum==4){
-        #shinyjs::hide("report")
-        #shinyjs::hide("markdown")
+      }else if(pagenum==4){
+        shinyjs::hide("report")
+        shinyjs::hide("markdown")
         #testmerge()
         #shinyjs::show("pmarkdown")
         
-      #}
-      
-      
-    })
+   
     
     #dbphq<<- read.csv("PHQ.csv",header=T)
     
@@ -358,18 +365,11 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
     
     
     
-    observeEvent(input$report,{
-      session$sendCustomMessage(type = "sendtodevice", message = list( report = h))
-    })  
-    observe({
-      if (is.null(input$clienttime)){ 
-        return(NULL)}
-      clientlocaltime<<- input$clienttime
-    })
+   
     
     
     
-     } else if(pagenumb==4){
+    # } else if(pagenumb==4){
     #######????????????????????????????????????????????????????????????????????????????????????????????????
    
     
@@ -491,7 +491,10 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
       imgtag=unlist(lapply(imgnodeset,function(x){ (unlist(xmlAttrs(x)[[1]]))}) )
       
     }
-    
+      }
+      
+        } 
+    })
     ########################################3   
      observe({
       if (is.null(input$receivedreps)){ 
@@ -500,20 +503,9 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
     #logjs("reports received by iframe")
        thekeys<- input$receivedreps$k
     thereps<-input$receivedreps$r
-   # rv$page=4
-    #shinyjs::alert(thekeys)[[1]]
-    #shinyjs::alert(thereps)[[1]]
-  #})
-   # testmerge=function (){ 
-     # fileName <- file.choose()
-    #  h1=HTML(readChar(fileName, file.info(fileName)$size))
-     # fileName <- file.choose()
-    #  h2=HTML(readChar(fileName, file.info(fileName)$size))
-     # fileName <- file.choose()
-    #  h3=HTML(readChar(fileName, file.info(fileName)$size))
-     # thekeys<<-as.list(c("8/14/2017, 9:42:49 PM","8/14/2017, 9:43:42 PM","8/14/2017, 9:47:58 PM"))
+
       thekeys<<-lapply(thekeys,function(x)as.Date(strptime(x,format="%m/%d/%Y, %I:%M:%S %p")))
-      #thereps<<-as.list(c(h1,h2,h3))
+      
       
       dfrep=data.frame("keys"= as.Date(unlist(thekeys),origin="1970-01-01"),#unlist(as.Date(thekeys, format = "%Y/%d/%m")),
                        "reports"=unlist(thereps),stringsAsFactors = FALSE)
@@ -552,33 +544,34 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
       
       imgsources<<-lapply(os,getimgsources)
       #########################
-      
-    })
-     
       output$pmarkdown <- renderUI({
         pmd<<- HTML(markdown::markdownToHTML(rmarkdown::render('preport.Rmd', quiet = TRUE)))
         
       })
-      shinyjs::show("pmarkdown")
-       }
-    }
-    
-    observe({
-      #if (is.null(input$pagenumber)){ 
-      # return(NULL)}
-      rvpage<- input$pagenumber
-      routes(rvpage)
-      logjs(paste0("rvpage is",rvpage))
+       shinyjs::show("pmarkdown")
       
     })
+     
+      
+     
+       
     
     
     
+    
+observeEvent(input$report,{
+  session$sendCustomMessage(type = "sendtodevice", message = list( report = h))
+})  
+observe({
+  if (is.null(input$clienttime)){ 
+    return(NULL)}
+  clientlocaltime<<- input$clienttime
+})  
     
     
  ###########################################33333   
 
    session$onSessionEnded(stopApp)
+  }  
     
-    }
     )
