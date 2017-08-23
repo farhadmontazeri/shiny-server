@@ -1,6 +1,6 @@
 window.onload = function() {
  window.parent.postMessage(['varx', 'ready'], '*');   
-};
+}
 $(document).ready(function () {
  
  if(!window.console){ window.console = {log: function(){} }; } ;
@@ -11,7 +11,7 @@ $(document).ready(function () {
     window.addEventListener('message', function(e) {
        var varname=e.data[0];
 	   var b = e.data[1];
-		console.log('iframe received a message,length of e is', e.data[0].length, 'variable name is: ',varname,' and data is: ',b);
+		console.log('iframe received a message,variable name is: ',varname,' and data is: ',b);
 		
 		if(varname=='vart'){
 
