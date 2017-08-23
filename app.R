@@ -265,8 +265,7 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
     observeEvent(input$prevBtn, navPage(-1))
     observeEvent(input$nextBtn, navPage(1))
     observe({
-      if (is.null(rv$page)){
-        return(NULL)}else{
+      if (is.null(rv$page))return(NULL)
       pagenum<-rv$page
       if(pagenum==1){
         
@@ -331,11 +330,12 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
         #
         
       }else if(pagenum==4){
-        shinyjs::hide("report")
-        shinyjs::hide("markdown")
+        #shinyjs::hide("report")
+        #shinyjs::hide("markdown")
         #testmerge()
         #shinyjs::show("pmarkdown")
-        
+      }
+        })
    
     
     #dbphq<<- read.csv("PHQ.csv",header=T)
@@ -491,10 +491,10 @@ $('#phqcausal tbody').on( 'click', 'td', function (e)
       imgtag=unlist(lapply(imgnodeset,function(x){ (unlist(xmlAttrs(x)[[1]]))}) )
       
     }
-      }
       
-        } 
-    })
+      
+         
+   
     ########################################3   
      observe({
       if (is.null(input$receivedreps)){ 
