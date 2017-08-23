@@ -1,6 +1,6 @@
 window.onload = function() {
  window.parent.postMessage(['varx', 'ready'], '*');   
-}
+};
 $(document).ready(function () {
  
  if(!window.console){ window.console = {log: function(){} }; } ;
